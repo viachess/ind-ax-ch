@@ -4,6 +4,24 @@ export const margin = {
   left: 56,
 };
 
+export const xAxesHeight = 40;
+
+export const colors = {
+  white: "#FFFFFF",
+  black: "#1B1B1B",
+  gray: "#98A7C0",
+  darkGray: "#2A2A2A",
+  accent: "#40FEAE",
+  darkAccent: "#256769",
+  transparent: "transparent",
+  red: "red",
+};
+
+export const mainZoomRectClipId = "main-zoom-clip";
+
+export const scaleYMin = 1 / 2;
+export const scaleYMax = 4;
+
 export const initialTransform = {
   scaleX: 1,
   scaleY: 1,

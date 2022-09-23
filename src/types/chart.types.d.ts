@@ -1,9 +1,9 @@
 import type { RefObject } from "react";
 import type { TransformMatrix } from "@visx/zoom/lib/types";
 import type { LinearScaleConfig } from "@visx/scale";
-import type { ScaleLinear } from "d3-scale";
+import type { ScaleLinear, ScaleTime } from "d3-scale";
 
-type PressurePoint = {
+export type PressurePoint = {
   value: number;
   timestamp: number; // | Date | Moment in production
 };
@@ -14,14 +14,15 @@ type ZoomState = {
   isDragging: boolean;
 };
 
-type IYAxisConfig = {
+type IAxisConfig = {
   id: string;
-  points: PressurePoint[];
   strokeColor: string;
   dashed: boolean;
-  // transform: TransformMatrix;
-  transformRef: React.MutableRefObject<TransformMatrix | null>;
+  yTransformMatrix: TransformMatrix;
   getYScale: (height: number) => ScaleLinear<number, number, never>;
+  points: PressurePoint[];
+  getXScale?: () => ScaleTime<number, number, never>;
+  xTransformMatrix: TransformMatrix;
 };
 
-export type { IYAxisConfig, ZoomState };
+export type { IAxisConfig, ZoomState };

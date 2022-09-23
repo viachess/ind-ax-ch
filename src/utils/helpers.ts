@@ -2,6 +2,18 @@ import type { ProvidedZoom, TransformMatrix } from "@visx/zoom/lib/types";
 import type { ScaleLinear, ScaleTime } from "d3-scale";
 import type { ZoomState } from "@/types/chart.types";
 
+export const lerp = (oldRange: number[], oldValue: number) => {
+  const [oldMax, oldMin] = oldRange;
+  const newMin = 0;
+  const newMax = 1;
+  // OldRange = (OldMax - OldMin)
+  const oldDiff = oldMax - oldMin;
+  const newDiff = newMax - newMin;
+  // NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+  const value = ((oldValue - oldMin) * newDiff) / oldDiff + newMin;
+  return value;
+};
+
 export const rescaleYAxis = <T>(
   scale: ScaleLinear<number, number, never>,
   // zoom: ProvidedZoom<T> & ZoomState
