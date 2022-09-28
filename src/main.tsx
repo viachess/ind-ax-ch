@@ -9,15 +9,13 @@ import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <>
-      <BrowserRouter>
-        <Navigation />
-        <Routes>
-          {routes.map(({ path, element }) => (
-            <Route key={nanoid()} path={path} element={element} />
-          ))}
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Navigation />
+      <Routes>
+        {routes.map(({ path, element }) => (
+          <Route key={nanoid()} path={path} element={element} />
+        ))}
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );

@@ -9,21 +9,20 @@ type Props = {
     id: string;
     points: PressurePoint[];
   }[];
+  timestampsArr: Date[][] | Date[];
   width: number;
   height: number;
 };
 
 const XAxesContainer = (props: Props) => {
-  const { data, width, height } = props;
+  const { data, width, height, timestampsArr } = props;
 
   const splitXAxes = useLineChartStore((state) => state.splitXAxes);
   const axesConfiguration = useLineChartStore(
     (state) => state.axesConfiguration
   );
 
-  const dates = data.map((d) => d.points.map((t) => new Date(t.timestamp)));
-  const timestampsArr = splitXAxes ? dates : dates.flat(1);
-  const offsetLeft = (data.length - 1) * margin.left;
+  const offsetLeft = data.length * margin.left;
 
   return (
     <>

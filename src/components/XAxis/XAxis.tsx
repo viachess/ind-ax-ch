@@ -53,7 +53,8 @@ const XAxis = (props: Props) => {
 
   const xScale = scaleTime({
     domain: xExtent,
-    range: [margin.left, width - margin.left * data.length],
+    // range: [margin.left, width - margin.left * data.length],
+    range: [offsetLeft, width - margin.left * data.length],
     nice: true,
   });
 
@@ -63,10 +64,12 @@ const XAxis = (props: Props) => {
     : globalZoomMatrix;
   const axisColor = strokeColor ? strokeColor : colors.white;
 
+  const rescaledXAxis = rescaleXAxis(xScale, matrix);
+
   return (
-    <Group transform={`translate(${offsetLeft}, 0)`}>
+    <Group transform={`translate(${0}, 0)`}>
       <Axis
-        scale={rescaleXAxis(xScale, matrix)}
+        scale={rescaledXAxis}
         top={height + (offsetTop ? offsetTop : 0)}
         orientation="bottom"
         stroke={axisColor}
