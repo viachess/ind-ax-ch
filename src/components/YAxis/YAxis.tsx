@@ -1,16 +1,27 @@
 import { Axis } from "@visx/axis";
 import React, { useEffect } from "react";
 import type { ScaleLinear } from "d3-scale";
+import { useLineChartStore } from "@/state";
+import { rescaleYAxis } from "@/utils/helpers";
+import { composeMatrices } from "@visx/zoom";
 
 type Props = {
-  id: string;
+  WinCCOA: string;
   height: number;
-  strokeColor: string;
-  zoomedYScale: ScaleLinear<number, number, never>;
+  // zoomedYScale: ScaleLinear<number, number, never>;
 };
 
 const YAxis = (props: Props) => {
-  const { id, zoomedYScale, height, strokeColor } = props;
+  const { WinCCOA, height } = props;
+  const config = useLineChartStore((state) => state.axesConfiguration[WinCCOA]);
+  const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
+  const { strokeColor, getYScale, yTransformMatrix } = config;
+
+  const yScale = getYScale(height);
+  const zoomedYScale = rescaleYAxis(
+    yScale,
+    composeMatrices(globalZoomMatrix, yTransformMatrix)
+  );
 
   return (
     <Axis
@@ -25,6 +36,9 @@ const YAxis = (props: Props) => {
         textAnchor: "end",
         verticalAnchor: "middle",
         fontSize: "0.85rem",
+        // style: {
+        //   userSelect: "none",
+        // },
       })}
       tickFormat={(value) => `${Number(value).toFixed(3)}`}
     />

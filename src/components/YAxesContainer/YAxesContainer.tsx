@@ -14,6 +14,7 @@ import { Group } from "@visx/group";
 import { YAxis } from "../YAxis";
 import { composeMatrices } from "@visx/zoom";
 import { nanoid } from "nanoid";
+import { compareStringArrays } from "@/utils/utils";
 
 type Props = {
   height: number;
@@ -21,36 +22,24 @@ type Props = {
 
 const YAxesContainer = (props: Props) => {
   const { height } = props;
-  const axesConfiguration = useLineChartStore(
-    (state) => state.axesConfiguration
+  const axesConfigurationKeys = useLineChartStore(
+    (state) => Object.keys(state.axesConfiguration),
+    compareStringArrays
   );
-
-  const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
+  useEffect(() => {
+    console.log("Y Axes container initial render");
+  }, []);
 
   return (
     <>
-      {axesConfiguration.map((config, index) => {
-        const { id, strokeColor, getYScale, yTransformMatrix } = config;
-
-        const yScale = getYScale(height);
-        const zoomedYScale = rescaleYAxis(
-          yScale,
-          composeMatrices(globalZoomMatrix, yTransformMatrix)
-        );
-        return (
-          <Group
-            key={nanoid()}
-            transform={`translate(${margin.left + margin.left * index}, 0)`}
-          >
-            <YAxis
-              id={id}
-              strokeColor={strokeColor}
-              zoomedYScale={zoomedYScale}
-              height={height}
-            />
-          </Group>
-        );
-      })}
+      {axesConfigurationKeys.map((WinCCOA, index) => (
+        <Group
+          key={WinCCOA}
+          transform={`translate(${margin.left + margin.left * index}, 0)`}
+        >
+          <YAxis WinCCOA={WinCCOA} height={height} />
+        </Group>
+      ))}
     </>
   );
 };

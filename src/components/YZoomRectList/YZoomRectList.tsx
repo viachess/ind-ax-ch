@@ -24,7 +24,9 @@ type Props = {
 const YZoomRectList = (props: Props) => {
   const { data, height } = props;
   const updateYZoom = useLineChartStore((state) => state.updateYZoom);
-
+  // const getAxesConfiguration = useLineChartStore(
+  //   (state) => state.getAxesConfiguration
+  // );
   return (
     <>
       {data.map((obj, index) => {
@@ -49,6 +51,7 @@ const YZoomRectList = (props: Props) => {
                   if (firstRender.current) {
                     firstRender.current = false;
                   }
+                  // console.log("useEffect reaction in y zoom rect. id: ", id);
                 }, [individualAxisZoom.transformMatrix]);
 
                 return (

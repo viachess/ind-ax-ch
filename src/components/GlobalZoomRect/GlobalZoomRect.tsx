@@ -24,14 +24,19 @@ type Props = {
   };
   // onMouseOver: (event: React.MouseEvent<SVGRectElement, MouseEvent>, datum: any) => void;
   // onMouseOver: React.MouseEventHandler<SVGRectElement>;
-  hideTooltip: () => void;
-  handleTooltip: (
-    event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
-  ) => void;
+  // hideTooltip: () => void;
+  // handleTooltip: (
+  //   event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
+  // ) => void;
 };
 
 const GlobalZoomRect = (props: Props) => {
-  const { width, height, zoomRectParams, hideTooltip, handleTooltip } = props;
+  const {
+    width,
+    height,
+    zoomRectParams,
+    // hideTooltip, handleTooltip
+  } = props;
   const setGlobalZoomMatrix = useLineChartStore(
     (state) => state.setGlobalZoomMatrix
   );
@@ -69,22 +74,22 @@ const GlobalZoomRect = (props: Props) => {
             fill={"transparent"}
             onTouchStart={(event) => {
               zoom.dragStart(event);
-              handleTooltip(event);
+              // handleTooltip(event);
             }}
             onTouchMove={(event) => {
               zoom.dragMove(event);
-              handleTooltip(event);
+              // handleTooltip(event);
             }}
             onTouchEnd={zoom.dragEnd}
             onMouseDown={zoom.dragStart}
             onMouseMove={(event) => {
               zoom.dragMove(event);
-              handleTooltip(event);
+              // handleTooltip(event);
             }}
             onMouseUp={zoom.dragEnd}
             onMouseLeave={() => {
               if (zoom.isDragging) zoom.dragEnd();
-              hideTooltip();
+              // hideTooltip();
             }}
             // FIXME: remove type casting and replace with appropriate typings
             // onMouseOver={onMouseOver as React.MouseEventHandler<SVGRectElement>}
