@@ -6,8 +6,9 @@ import type { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useState, useEffect } from "react";
 
 import { SketchPicker } from "react-color";
-import { useLineChartStore } from "@/state";
+import { AxesConfigurationRecord, useLineChartStore } from "@/state";
 import { PressurePoint } from "@/types/chart.types";
+import { compareStringArrays } from "@/utils/utils";
 
 type Props = {
   data: {
@@ -31,21 +32,18 @@ const legendRectBounds = {
 
 const Legend = (props: Props) => {
   const { data } = props;
-  const axesConfiguration = useLineChartStore(
-    (state) => state.axesConfiguration
+  const axesConfigurationKeys = useLineChartStore(
+    (state) => Object.keys(state.axesConfiguration),
+    compareStringArrays
   );
   const getAxesConfiguration = useLineChartStore(
     (state) => state.getAxesConfiguration
   );
-  const setYAxesConfiguration = useLineChartStore(
+  const setAxesConfiguration = useLineChartStore(
     (state) => state.setAxesConfiguration
   );
 
-  // useEffect(() => {
-  //   console.log("legend render log");
-  //   console.log("y axes config value");
-  //   console.log(yAxesConfiguration);
-  // }, [yAxesConfiguration]);
+  const currentConfiguration = getAxesConfiguration();
 
   return (
     <>
@@ -60,8 +58,9 @@ const Legend = (props: Props) => {
           }}
         >
           {/* type assertion is used due to length check guard in LineChart */}
-          {axesConfiguration.map((config) => {
-            const { id, strokeColor, dashed } = config;
+          {axesConfigurationKeys.map((WinCCOA, i, arr) => {
+            const config = currentConfiguration[WinCCOA];
+            const { strokeColor, dashed } = config;
             const [open, setOpen] = useState(false);
 
             const hide = () => {
@@ -73,32 +72,42 @@ const Legend = (props: Props) => {
             };
 
             const updateStrokeColor = (color: any) => {
-              const newConfig = getAxesConfiguration().map((config) => {
-                if (id === config.id) {
-                  return {
+              const newConfig: AxesConfigurationRecord = {};
+              for (const [tag, config] of Object.entries(
+                currentConfiguration
+              )) {
+                if (WinCCOA === tag) {
+                  newConfig[tag] = {
                     ...config,
                     strokeColor: color.hex,
                   };
                 } else {
-                  return config;
+                  newConfig[tag] = {
+                    ...config,
+                  };
                 }
-              });
-
-              setYAxesConfiguration(newConfig);
+              }
+              setAxesConfiguration(newConfig);
             };
 
             const onCheckboxChange = (e: CheckboxChangeEvent) => {
-              const newConfig = getAxesConfiguration().map((config) => {
-                if (id === config.id) {
-                  return {
+              const newConfig: AxesConfigurationRecord = {};
+              for (const [tag, config] of Object.entries(
+                currentConfiguration
+              )) {
+                if (WinCCOA === tag) {
+                  newConfig[tag] = {
                     ...config,
                     dashed: e.target.checked,
                   };
                 } else {
-                  return config;
+                  newConfig[tag] = {
+                    ...config,
+                  };
                 }
-              });
-              setYAxesConfiguration(newConfig);
+              }
+
+              setAxesConfiguration(newConfig);
             };
 
             return (
@@ -149,7 +158,7 @@ const Legend = (props: Props) => {
                   </Button>
                 </Popover>
 
-                <p style={legendTextStyles}>{id}</p>
+                <p style={legendTextStyles}>{WinCCOA}</p>
               </div>
             );
           })}

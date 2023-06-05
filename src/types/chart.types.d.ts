@@ -5,7 +5,7 @@ import type { ScaleLinear, ScaleTime } from "d3-scale";
 
 export type PressurePoint = {
   value: number;
-  timestamp: number; // | Date | Moment in production
+  timestamp: number; // native Date in production
 };
 
 type ZoomState = {
@@ -15,7 +15,6 @@ type ZoomState = {
 };
 
 type IAxisConfig = {
-  id: string;
   strokeColor: string;
   dashed: boolean;
   yTransformMatrix: TransformMatrix;

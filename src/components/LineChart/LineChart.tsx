@@ -31,7 +31,7 @@ import {
 } from "@/utils/constants";
 
 import { GlobalZoomRect } from "../GlobalZoomRect";
-import { useLineChartStore } from "@/state";
+import { AxesConfigurationRecord, useLineChartStore } from "@/state";
 
 import {
   bisector,
@@ -74,15 +74,15 @@ const getDate = (d: PressurePoint) => new Date(d.timestamp);
 const LineChart = ({ parent, data }: Props) => {
   const { width, height } = parent;
 
-  const axesConfiguration = useLineChartStore(
-    (state) => state.axesConfiguration
-  );
+  // const axesConfiguration = useLineChartStore(
+  //   (state) => state.axesConfiguration
+  // );
 
   const setAxesConfiguration = useLineChartStore(
     (state) => state.setAxesConfiguration
   );
 
-  const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
+  // const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
 
   const splitXAxes = useLineChartStore((state) => state.splitXAxes);
   const setSplitXAxes = useLineChartStore((state) => state.setSplitXAxes);
@@ -95,14 +95,13 @@ const LineChart = ({ parent, data }: Props) => {
     : (extent(timestampsArr as Date[]) as [Date, Date]);
 
   useEffect(() => {
-    const config = data.map((obj, i, arr) => {
-      const zeroToOne = lerp([0, arr.length], i);
+    const config: AxesConfigurationRecord = {};
+    for (const [i, obj] of data.entries()) {
+      const zeroToOne = lerp([0, data.length], i);
 
       const { points } = obj;
       const yExtent = extent(points.map((d) => d.value).flat(1));
-
-      return {
-        id: obj.id,
+      config[obj.id] = {
         points,
         strokeColor: interpolatePlasma(zeroToOne),
         dashed: false,
@@ -115,45 +114,46 @@ const LineChart = ({ parent, data }: Props) => {
         yTransformMatrix: initialTransform,
         xTransformMatrix: initialTransform,
       };
-    });
+    }
+
     setAxesConfiguration(config);
-  }, []);
+  }, [data]);
 
-  const {
-    tooltipData,
-    tooltipLeft,
-    tooltipTop,
-    tooltipOpen,
-    showTooltip,
-    hideTooltip,
-  } = useTooltip();
+  // const {
+  //   tooltipData,
+  //   tooltipLeft,
+  //   tooltipTop,
+  //   tooltipOpen,
+  //   showTooltip,
+  //   hideTooltip,
+  // } = useTooltip();
 
-  const { containerRef: tooltipContainerRef, TooltipInPortal } =
-    useTooltipInPortal({
-      // use TooltipWithBounds
-      // detectBounds: true,
-      detectBounds: false,
-      // when tooltip containers are scrolled, this will correctly update the Tooltip position
-      scroll: true,
-    });
+  // const { containerRef: tooltipContainerRef, TooltipInPortal } =
+  //   useTooltipInPortal({
+  //     // use TooltipWithBounds
+  //     // detectBounds: true,
+  //     detectBounds: false,
+  //     // when tooltip containers are scrolled, this will correctly update the Tooltip position
+  //     scroll: true,
+  //   });
 
   // chart containing box mouseover event handler
   // FIXME: 1. [] replace parameter types 2. [] using type definitions, possibly remove nullish coalescing (????)
-  const handleMouseOver = (
-    event: React.MouseEvent<SVGRectElement>,
-    datum: any
-  ) => {
-    // FIXME: replace event target type with appropriate option
-    const coords =
-      localPoint((event.target as any).ownerSVGElement, event) ?? false;
-    if (coords) {
-      showTooltip({
-        tooltipLeft: coords.x,
-        tooltipTop: coords.y,
-        tooltipData: datum,
-      });
-    }
-  };
+  // const handleMouseOver = (
+  //   event: React.MouseEvent<SVGRectElement>,
+  //   datum: any
+  // ) => {
+  //   // FIXME: replace event target type with appropriate option
+  //   const coords =
+  //     localPoint((event.target as any).ownerSVGElement, event) ?? false;
+  //   if (coords) {
+  //     showTooltip({
+  //       tooltipLeft: coords.x,
+  //       tooltipTop: coords.y,
+  //       tooltipData: datum,
+  //     });
+  //   }
+  // };
 
   // x-axes split checkbox change handler
   const onCheckboxChange = (e: CheckboxChangeEvent) => {
@@ -170,80 +170,85 @@ const LineChart = ({ parent, data }: Props) => {
 
   const offsetLeft = data.length * margin.left;
 
-  const handleTooltip = useCallback(
-    (
-      event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
-    ) => {
-      // [] pixel value of x inside container, subtract offsetLeft from x
-      // and margin.top from y to get correct value
-      const { x, y } = localPoint(event) || { x: 0, y: 0 };
+  // const handleTooltip = useCallback(
+  //   (
+  //     event: React.TouchEvent<SVGRectElement> | React.MouseEvent<SVGRectElement>
+  //   ) => {
+  //     // [] pixel value of x inside container, subtract offsetLeft from x
+  //     // and margin.top from y to get correct value
+  //     const { x, y } = localPoint(event) || { x: 0, y: 0 };
 
-      const tooltipPointsArray = axesConfiguration.map((config, idx) => {
-        // globalZoomMatrix
-        const {
-          id,
-          xTransformMatrix,
-          yTransformMatrix,
-          getYScale,
-          points,
-          strokeColor,
-        } = config;
-        const xScale = splitXAxes
-          ? scaleTime({
-              domain: xExtent[idx] as [Date, Date],
-              // range: [margin.left, width - margin.left * data.length],
-              range: [offsetLeft, width - margin.left * data.length],
-              nice: true,
-            })
-          : scaleTime({
-              domain: xExtent as [Date, Date],
-              // range: [margin.left, width - margin.left * data.length],
-              range: [offsetLeft, width - margin.left * data.length],
-              nice: true,
-            });
-        // const yScale = getYScale(height);
-        const rescaledX = rescaleXAxis(
-          xScale,
-          composeMatrices(globalZoomMatrix, xTransformMatrix)
-        );
-        // const rescaledY = rescaleXAxis(xScale, composeMatrices(globalZoomMatrix, yTransformMatrix));
+  //     const tooltipPointsArray: {
+  //       point: PressurePoint;
+  //       strokeColor: string;
+  //       id: string;
+  //     }[] = [];
+  //     for (const [idx, [WinCCOA, config]] of Object.entries(
+  //       axesConfiguration
+  //     ).entries()) {
+  //       const {
+  //         xTransformMatrix,
+  //         yTransformMatrix,
+  //         getYScale,
+  //         points,
+  //         strokeColor,
+  //       } = config;
+  //       const xScale = splitXAxes
+  //         ? scaleTime({
+  //             domain: xExtent[idx] as [Date, Date],
+  //             // range: [margin.left, width - margin.left * data.length],
+  //             range: [offsetLeft, width - margin.left * data.length],
+  //             nice: true,
+  //           })
+  //         : scaleTime({
+  //             domain: xExtent as [Date, Date],
+  //             // range: [margin.left, width - margin.left * data.length],
+  //             range: [offsetLeft, width - margin.left * data.length],
+  //             nice: true,
+  //           });
+  //       // const yScale = getYScale(height);
+  //       const rescaledX = rescaleXAxis(
+  //         xScale,
+  //         composeMatrices(globalZoomMatrix, xTransformMatrix)
+  //       );
+  //       // const rescaledY = rescaleXAxis(xScale, composeMatrices(globalZoomMatrix, yTransformMatrix));
 
-        const x0 = rescaledX.invert(x);
-        const index = bisectDate(points, x0, 1);
+  //       const x0 = rescaledX.invert(x);
+  //       const index = bisectDate(points, x0, 1);
 
-        const d0 = points[index - 1];
-        const d1 = points[index];
-        let d = d0;
-        if (d1 && getDate(d1)) {
-          d =
-            x0.valueOf() - getDate(d0).valueOf() >
-            getDate(d1).valueOf() - x0.valueOf()
-              ? d1
-              : d0;
-        }
-        return {
-          point: d,
-          strokeColor,
-          id,
-        };
-      });
+  //       const d0 = points[index - 1];
+  //       const d1 = points[index];
+  //       let d = d0;
+  //       if (d1 && getDate(d1)) {
+  //         d =
+  //           x0.valueOf() - getDate(d0).valueOf() >
+  //           getDate(d1).valueOf() - x0.valueOf()
+  //             ? d1
+  //             : d0;
+  //       }
+  //       tooltipPointsArray.push({
+  //         point: d,
+  //         strokeColor,
+  //         id: WinCCOA,
+  //       });
+  //     }
 
-      showTooltip({
-        tooltipData: tooltipPointsArray,
-        tooltipLeft: x,
-        // tooltipTop: stockValueScale(getStockValue(d)),
-        tooltipTop: y - margin.top,
-      });
-    },
-    [
-      showTooltip,
-      splitXAxes,
-      axesConfiguration,
-      globalZoomMatrix,
-      // stockValueScale,
-      // dateScale
-    ]
-  );
+  //     showTooltip({
+  //       tooltipData: tooltipPointsArray,
+  //       tooltipLeft: x,
+  //       // tooltipTop: stockValueScale(getStockValue(d)),
+  //       tooltipTop: y - margin.top,
+  //     });
+  //   },
+  //   [
+  //     showTooltip,
+  //     splitXAxes,
+  //     axesConfiguration,
+  //     globalZoomMatrix,
+  //     // stockValueScale,
+  //     // dateScale
+  //   ]
+  // );
 
   if (!width || !height) {
     return (
@@ -307,7 +312,8 @@ const LineChart = ({ parent, data }: Props) => {
             height={height}
           />
         </Group>
-        {tooltipOpen && axesConfiguration.length && (
+        {/* Tooltip line */}
+        {/* {tooltipOpen && axesConfiguration.length && (
           <Line
             from={{ x: tooltipLeft, y: margin.top }}
             to={{ x: tooltipLeft, y: height }}
@@ -316,7 +322,7 @@ const LineChart = ({ parent, data }: Props) => {
             pointerEvents="none"
             strokeDasharray="5,2"
           />
-        )}
+        )} */}
         <GlobalZoomRect
           width={width}
           height={height}
@@ -325,12 +331,12 @@ const LineChart = ({ parent, data }: Props) => {
           // onMouseOver={
           //   handleMouseOver as React.MouseEventHandler<SVGRectElement>
           // }
-          hideTooltip={hideTooltip}
-          handleTooltip={handleTooltip}
+          // hideTooltip={hideTooltip}
+          // handleTooltip={handleTooltip}
         />
       </svg>
       <div>
-        {tooltipOpen && axesConfiguration.length && (
+        {/* {tooltipOpen && axesConfiguration.length && (
           <TooltipInPortal
             // set this to random so it correctly updates with parent bounds
             key={nanoid()}
@@ -365,9 +371,8 @@ const LineChart = ({ parent, data }: Props) => {
               </div>
             ) : null}
           </TooltipInPortal>
-        )}
+        )} */}
       </div>
-
       <Legend data={data} />
       <Checkbox
         onChange={onCheckboxChange}
