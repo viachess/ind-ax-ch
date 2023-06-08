@@ -285,12 +285,11 @@ const LineChart = ({ parent, data }: Props) => {
         />
         {/* x axes section */}
         <XAxesContainer
-          data={data}
           height={height}
           width={width}
           timestampsArr={timestampsArr}
         />
-        <XZoomRectList data={data} height={height} width={width} />
+        <XZoomRectList height={height} width={width} />
         {/* global zoom rectangle wrap */}
         <YAxesContainer height={height} />
         <YZoomRectList height={height} />

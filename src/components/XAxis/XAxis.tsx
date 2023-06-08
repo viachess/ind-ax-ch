@@ -20,10 +20,7 @@ import { composeMatrices } from "@visx/zoom";
 const defaultDateFormat = timeFormat("%H:%M:%S");
 
 type Props = {
-  data: {
-    id: string;
-    points: PressurePoint[];
-  }[];
+  tagListLength: number;
   timestampsArr: Date[];
   width: number;
   height: number;
@@ -36,7 +33,6 @@ type Props = {
 
 const XAxis = (props: Props) => {
   const {
-    data,
     width,
     height,
     offsetLeft,
@@ -44,6 +40,7 @@ const XAxis = (props: Props) => {
     timestampsArr,
     xTransformMatrix,
     strokeColor,
+    tagListLength,
     // xScale
   } = props;
 
@@ -54,7 +51,7 @@ const XAxis = (props: Props) => {
   const xScale = scaleTime({
     domain: xExtent,
     // range: [margin.left, width - margin.left * data.length],
-    range: [offsetLeft, width - margin.left * data.length],
+    range: [offsetLeft, width - margin.left * tagListLength],
     nice: true,
   });
 
