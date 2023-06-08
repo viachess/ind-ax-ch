@@ -3,6 +3,8 @@ import { PressurePoint } from "@/types/chart.types";
 import {
   initialTransform,
   margin,
+  scaleXMax,
+  scaleXMin,
   scaleYMax,
   scaleYMin,
   xAxesHeight,
@@ -38,8 +40,8 @@ const XZoomRectList = (props: Props) => {
                 <Zoom<SVGRectElement>
                   width={margin.left}
                   height={height}
-                  scaleXMin={1 / 2}
-                  scaleXMax={4}
+                  scaleXMin={scaleXMin}
+                  scaleXMax={scaleXMax}
                   scaleYMin={scaleYMin}
                   scaleYMax={scaleYMax}
                   initialTransformMatrix={{ ...initialTransform }}

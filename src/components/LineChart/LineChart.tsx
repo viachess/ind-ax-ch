@@ -74,15 +74,9 @@ const getDate = (d: PressurePoint) => new Date(d.timestamp);
 const LineChart = ({ parent, data }: Props) => {
   const { width, height } = parent;
 
-  // const axesConfiguration = useLineChartStore(
-  //   (state) => state.axesConfiguration
-  // );
-
   const setAxesConfiguration = useLineChartStore(
     (state) => state.setAxesConfiguration
   );
-
-  // const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
 
   const splitXAxes = useLineChartStore((state) => state.splitXAxes);
   const setSplitXAxes = useLineChartStore((state) => state.setSplitXAxes);
@@ -100,7 +94,8 @@ const LineChart = ({ parent, data }: Props) => {
       const zeroToOne = lerp([0, data.length], i);
 
       const { points } = obj;
-      const yExtent = extent(points.map((d) => d.value).flat(1));
+      console.log(points);
+      const yExtent = extent(points.map((d) => d.value));
       config[obj.id] = {
         points,
         strokeColor: interpolatePlasma(zeroToOne),
@@ -298,7 +293,7 @@ const LineChart = ({ parent, data }: Props) => {
         <XZoomRectList data={data} height={height} width={width} />
         {/* global zoom rectangle wrap */}
         <YAxesContainer height={height} />
-        <YZoomRectList data={data} height={height}></YZoomRectList>
+        <YZoomRectList height={height} />
         <Group
           transform={`translate(${
             // data.length * margin.left - margin.left * 2
@@ -306,7 +301,6 @@ const LineChart = ({ parent, data }: Props) => {
           }, 0)`}
         >
           <LineContainer
-            data={data}
             timestampsArr={timestampsArr}
             width={width}
             height={height}
@@ -373,7 +367,7 @@ const LineChart = ({ parent, data }: Props) => {
           </TooltipInPortal>
         )} */}
       </div>
-      <Legend data={data} />
+      <Legend />
       <Checkbox
         onChange={onCheckboxChange}
         style={{ color: "white", margin: "1rem" }}

@@ -9,6 +9,8 @@ import {
   margin,
   scaleYMin,
   scaleYMax,
+  scaleXMax,
+  scaleXMin,
 } from "@/utils/constants";
 import { useLineChartStore } from "@/state";
 
@@ -45,8 +47,8 @@ const GlobalZoomRect = (props: Props) => {
     <Zoom<SVGRectElement>
       width={width}
       height={height}
-      scaleXMin={1 / 2}
-      scaleXMax={4}
+      scaleXMin={scaleXMin}
+      scaleXMax={scaleXMax}
       scaleYMin={scaleYMin}
       scaleYMax={scaleYMax}
       initialTransformMatrix={{

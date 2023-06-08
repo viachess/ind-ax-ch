@@ -22,9 +22,8 @@ type Props = {
 
 const YAxesContainer = (props: Props) => {
   const { height } = props;
-  const axesConfigurationKeys = useLineChartStore(
-    (state) => Object.keys(state.axesConfiguration),
-    compareStringArrays
+  const axesConfigurationTagList = useLineChartStore(
+    (state) => state.axesConfigurationTagList
   );
   useEffect(() => {
     console.log("Y Axes container initial render");
@@ -32,7 +31,7 @@ const YAxesContainer = (props: Props) => {
 
   return (
     <>
-      {axesConfigurationKeys.map((WinCCOA, index) => (
+      {axesConfigurationTagList.map((WinCCOA, index) => (
         <Group
           key={WinCCOA}
           transform={`translate(${margin.left + margin.left * index}, 0)`}

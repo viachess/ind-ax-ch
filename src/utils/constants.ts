@@ -19,8 +19,10 @@ export const colors = {
 
 export const mainZoomRectClipId = "main-zoom-clip";
 
-export const scaleYMin = 1 / 2;
-export const scaleYMax = 4;
+export const scaleYMin = undefined;
+export const scaleYMax = undefined;
+export const scaleXMin = undefined;
+export const scaleXMax = undefined;
 
 export const initialTransform = {
   scaleX: 1,

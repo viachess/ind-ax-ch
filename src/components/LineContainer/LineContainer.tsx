@@ -17,10 +17,10 @@ import { nanoid } from "nanoid";
 import { compareStringArrays } from "@/utils/utils";
 
 type Props = {
-  data: {
-    id: string;
-    points: PressurePoint[];
-  }[];
+  // data: {
+  //   id: string;
+  //   points: PressurePoint[];
+  // }[];
   width: number;
   height: number;
   timestampsArr: Date[] | Date[][];
@@ -36,13 +36,15 @@ function TrendLine({
   index,
   width,
   height,
-  data,
   timestampsArr,
 }: TrendLineProps) {
   const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
   const splitXAxes = useLineChartStore((state) => state.splitXAxes);
 
   const config = useLineChartStore((state) => state.axesConfiguration[WinCCOA]);
+  const tagListLength = useLineChartStore(
+    (state) => state.axesConfigurationTagList.length
+  );
 
   const {
     strokeColor,
@@ -66,11 +68,11 @@ function TrendLine({
     ? (extent(timestampsArr[index] as Date[]) as [Date, Date])
     : (extent(timestampsArr as Date[]) as [Date, Date]);
 
-  const offsetLeft = data.length * margin.left;
+  const offsetLeft = tagListLength * margin.left;
 
   const xScale = scaleTime({
     domain: xExtent,
-    range: [offsetLeft, width - margin.left * data.length],
+    range: [offsetLeft, width - margin.left * tagListLength],
     nice: true,
   });
 
@@ -94,20 +96,20 @@ function TrendLine({
       />
     </Group>
   );
-  // return ()
 }
 
 const LineContainer = (props: Props) => {
-  const axesConfigurationKeys = useLineChartStore(
-    (state) => Object.keys(state.axesConfiguration),
-    compareStringArrays
+  const axesConfigurationTagList = useLineChartStore(
+    (state) => state.axesConfigurationTagList
   );
+
   useEffect(() => {
     console.log("line container initial render log");
   }, []);
+
   return (
     <React.Fragment>
-      {axesConfigurationKeys.map((WinCCOA, index) => (
+      {axesConfigurationTagList.map((WinCCOA, index) => (
         <TrendLine key={WinCCOA} WinCCOA={WinCCOA} index={index} {...props} />
       ))}
     </React.Fragment>

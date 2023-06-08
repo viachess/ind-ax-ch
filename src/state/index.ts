@@ -6,14 +6,16 @@ import { immer } from "zustand/middleware/immer";
 import { devtools } from "zustand/middleware";
 
 type WinccoaTag = string;
+type WinCCOATagList = WinccoaTag[];
 export type AxesConfigurationRecord = Record<WinccoaTag, IAxisConfig>;
 interface LineChartState {
   globalZoomMatrix: TransformMatrix;
-  // increase: (by: number) => void
   splitXAxes: boolean;
   setSplitXAxes: (val: boolean) => void;
   setGlobalZoomMatrix: (newMatrix: TransformMatrix) => void;
-  // axesConfiguration: IAxisConfig[] | [];
+  axesConfigurationTagList: WinCCOATagList;
+  getAxesConfigurationTagList: () => WinCCOATagList;
+  setAxesConfigurationTagList: (list: WinCCOATagList) => void;
   axesConfiguration: AxesConfigurationRecord;
   getAxesConfiguration: () => AxesConfigurationRecord;
   setAxesConfiguration: (newConfig: AxesConfigurationRecord) => void;
@@ -32,6 +34,15 @@ export const useLineChartStore = create<LineChartState>()(
       },
       splitXAxes: false,
       setSplitXAxes: (val) => set({ splitXAxes: val }),
+      axesConfigurationTagList: [],
+      getAxesConfigurationTagList: () => get().axesConfigurationTagList,
+      setAxesConfigurationTagList: (list) => {
+        // local version, in reality make a reducer for object list changes
+        // with ADD, REMOVE, RESET actions.
+        set((state) => {
+          state.axesConfigurationTagList = list;
+        });
+      },
       axesConfiguration: {},
       getAxesConfiguration: () => get().axesConfiguration,
       setAxesConfiguration: (newConfig) => {
