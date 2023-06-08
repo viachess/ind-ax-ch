@@ -77,6 +77,9 @@ const LineChart = ({ parent, data }: Props) => {
   const setAxesConfiguration = useLineChartStore(
     (state) => state.setAxesConfiguration
   );
+  const setAxesConfigurationTagList = useLineChartStore(
+    (state) => state.setAxesConfigurationTagList
+  );
 
   const splitXAxes = useLineChartStore((state) => state.splitXAxes);
   const setSplitXAxes = useLineChartStore((state) => state.setSplitXAxes);
@@ -90,11 +93,11 @@ const LineChart = ({ parent, data }: Props) => {
 
   useEffect(() => {
     const config: AxesConfigurationRecord = {};
+    const tagList = [];
     for (const [i, obj] of data.entries()) {
       const zeroToOne = lerp([0, data.length], i);
-
-      const { points } = obj;
-      console.log(points);
+      const { points, id } = obj;
+      tagList.push(id);
       const yExtent = extent(points.map((d) => d.value));
       config[obj.id] = {
         points,
@@ -110,7 +113,7 @@ const LineChart = ({ parent, data }: Props) => {
         xTransformMatrix: initialTransform,
       };
     }
-
+    setAxesConfigurationTagList(tagList);
     setAxesConfiguration(config);
   }, [data]);
 
