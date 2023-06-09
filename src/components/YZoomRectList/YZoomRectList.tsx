@@ -15,6 +15,7 @@ import { nanoid } from "nanoid";
 import { Group } from "@visx/group";
 import { useLineChartStore } from "@/state";
 import { compareStringArrays } from "@/utils/utils";
+import { ZustandZoom } from "../ZustandZoom";
 
 type Props = {
   // data: {
@@ -31,28 +32,35 @@ type Props2 = {
 
 const SplitAxesYZoomRect = (props: Props2) => {
   const { WinCCOA, height, index } = props;
-  const updateYZoom = useLineChartStore((state) => state.updateYZoom);
+  const transformMatrix = useLineChartStore(
+    (state) => state.axesConfiguration[WinCCOA].yTransformMatrix
+  );
+  const updateYZoomInState = useLineChartStore((state) => state.updateYZoom);
+  const updateZoom = (tag: string) => (mat: TransformMatrix) =>
+    updateYZoomInState(tag, mat);
 
   return (
-    <Zoom<SVGRectElement>
+    <ZustandZoom<SVGRectElement>
       width={margin.left}
       height={height}
       scaleXMin={scaleXMin}
       scaleXMax={scaleXMax}
       scaleYMin={scaleYMin}
       scaleYMax={scaleYMax}
-      initialTransformMatrix={{ ...initialTransform }}
+      // initialTransformMatrix={{ ...initialTransform }}
+      transformMatrix={transformMatrix}
+      transformMatrixSetter={updateZoom(WinCCOA)}
     >
       {(individualAxisZoom) => {
-        const firstRender = useRef(true);
-        useEffect(() => {
-          if (!firstRender.current) {
-            updateYZoom(WinCCOA, individualAxisZoom.transformMatrix);
-          }
-          if (firstRender.current) {
-            firstRender.current = false;
-          }
-        }, [individualAxisZoom.transformMatrix]);
+        // const firstRender = useRef(true);
+        // useEffect(() => {
+        //   if (!firstRender.current) {
+        //     updateYZoom(WinCCOA, individualAxisZoom.transformMatrix);
+        //   }
+        //   if (firstRender.current) {
+        //     firstRender.current = false;
+        //   }
+        // }, [individualAxisZoom.transformMatrix]);
 
         return (
           <Group
@@ -99,7 +107,7 @@ const SplitAxesYZoomRect = (props: Props2) => {
           </Group>
         );
       }}
-    </Zoom>
+    </ZustandZoom>
   );
 };
 

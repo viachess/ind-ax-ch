@@ -55,21 +55,23 @@ const XAxesContainer = (props: Props) => {
   );
   const tagListLength = axesConfigurationTagList.length;
   const offsetLeft = tagListLength * margin.left;
-
+  console.log("x axes container render log");
   return (
     <>
       {splitXAxes ? (
         axesConfigurationTagList.map((WinCCOA, index) => {
-          <SplitAxesXAxisView
-            key={WinCCOA}
-            WinCCOA={WinCCOA}
-            width={width}
-            height={height}
-            index={index}
-            offsetLeft={offsetLeft}
-            timestampsArr={timestampsArr[index] as Date[]}
-            tagListLength={tagListLength}
-          />;
+          return (
+            <SplitAxesXAxisView
+              key={WinCCOA}
+              WinCCOA={WinCCOA}
+              width={width}
+              height={height}
+              index={index}
+              offsetLeft={offsetLeft}
+              timestampsArr={timestampsArr[index] as Date[]}
+              tagListLength={tagListLength}
+            />
+          );
         })
       ) : (
         <XAxis

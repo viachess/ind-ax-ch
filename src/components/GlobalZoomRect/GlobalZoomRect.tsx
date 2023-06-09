@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { Zoom } from "@visx/zoom";
+// import { Zoom } from "@visx/zoom";
 import { localPoint } from "@visx/event";
 
 import type { TransformMatrix } from "@visx/zoom/lib/types";
@@ -13,6 +13,7 @@ import {
   scaleXMin,
 } from "@/utils/constants";
 import { useLineChartStore } from "@/state";
+import { ZustandZoom } from "../ZustandZoom";
 
 type Props = {
   // tooltipContainerRef: (element: SVGElement | HTMLElement | null) => void;
@@ -39,28 +40,31 @@ const GlobalZoomRect = (props: Props) => {
     zoomRectParams,
     // hideTooltip, handleTooltip
   } = props;
+  const globalZoomMatrix = useLineChartStore((state) => state.globalZoomMatrix);
   const setGlobalZoomMatrix = useLineChartStore(
     (state) => state.setGlobalZoomMatrix
   );
 
   return (
-    <Zoom<SVGRectElement>
+    <ZustandZoom<SVGRectElement>
       width={width}
       height={height}
       scaleXMin={scaleXMin}
       scaleXMax={scaleXMax}
       scaleYMin={scaleYMin}
       scaleYMax={scaleYMax}
-      initialTransformMatrix={{
-        ...initialTransform,
-        translateX: margin.left,
-      }}
+      // initialTransformMatrix={{
+      //   ...initialTransform,
+      //   translateX: margin.left,
+      // }}
+      transformMatrix={globalZoomMatrix}
+      transformMatrixSetter={setGlobalZoomMatrix}
     >
       {(zoom) => {
-        useEffect(() => {
-          // console.log("global zoom rect effect log");
-          setGlobalZoomMatrix({ ...zoom.transformMatrix });
-        }, [zoom.transformMatrix]);
+        // useEffect(() => {
+        //   // console.log("global zoom rect effect log");
+        //   setGlobalZoomMatrix({ ...zoom.transformMatrix });
+        // }, [zoom.transformMatrix]);
 
         return (
           <rect
@@ -103,7 +107,7 @@ const GlobalZoomRect = (props: Props) => {
           />
         );
       }}
-    </Zoom>
+    </ZustandZoom>
   );
 };
 

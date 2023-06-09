@@ -287,6 +287,7 @@ const LineChart = ({ parent, data }: Props) => {
           y={zoomRectParams.y}
         />
         {/* x axes section */}
+
         <XAxesContainer
           height={height}
           width={width}
